@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Denormalized Float Checker</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				margin: 20px;
+				background-color: #f0f0f0;
+			}
+
+			.container {
+				max-width: 800px;
+				margin: 0 auto;
+			}
+
+			textarea {
+				width: 100%;
+				height: 200px;
+				padding: 10px;
+				margin: 10px 0;
+				border: 2px solid #ccc;
+				border-radius: 4px;
+				font-family: monospace;
+			}
+
+			button {
+				padding: 10px 20px;
+				background-color: #4CAF50;
+				color: white;
+				border: none;
+				border-radius: 4px;
+				cursor: pointer;
+			}
+
+			button:hover {
+				background-color: #45a049;
+			}
+
+			.result {
+				margin-top: 20px;
+				padding: 15px;
+				background-color: white;
+				border-radius: 4px;
+				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			}
+
+			.entry {
+				padding: 5px;
+				margin: 2px 0;
+				font-family: monospace;
+			}
+
+			.invalid {
+				color: red;
+			}
+
+			.denormal {
+				color: blue;
+			}
+
+			.normal {
+				color: green;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1>Denormalized Float Checker</h1>
+			<p> The purpose of this utility is to check for denormalized floats (also known as <a href="https://en.wikipedia.org/wiki/Subnormal_number">subnormal numbers</a>). Paste 32-bit floats down below to check them. </p>
+			<p> Some examples are: <code>
+					<ul>
+						<li>0x3F800000 (Normal)</li>
+						<li>0x7F800000 (Normal)</li>
+						<li>0xFF800000 (Normal)</li>
+						<li>0x7FC00000 (Normal)</li>
+						<li>0x00000001 (Denormal)</li>
+						<li>0x80000002 (Denormal)</li>
+						<li>0x007FFFFF (Denormal)</li>
+					</ul>
+				</code>
+			</p>
+			<textarea id="input" placeholder="Paste hex values here (one per line)..."></textarea>
+			<button onclick="processInput()">Check Values</button>
+			<div id="results" class="result"></div>
+		</div>
+		<script>
+			function processInput() {
+				const input = document.getElementById('input').value;
+				const lines = input.split('\n');
+				const resultsDiv = document.getElementById('results');
+				resultsDiv.innerHTML = '';
+				lines.forEach((line, index) => {
+					const entryDiv = document.createElement('div');
+					entryDiv.className = 'entry';
+
+					// Clean input: remove whitespace and 0x prefix
+					const cleaned = line.trim().replace(/^0x/i, '');
+					if (!cleaned) {
+						entryDiv.textContent = `Line ${index + 1}: Empty line`;
+						entryDiv.className += ' invalid';
+						resultsDiv.appendChild(entryDiv);
+						return;
+					}
+
+					// Validate hex string
+					if (!/^[0-9a-fA-F]{8}$/.test(cleaned)) {
+						entryDiv.textContent = `Line ${index + 1}: Invalid 32-bit hex value '${line.trim()}'`;
+						entryDiv.className += ' invalid';
+						resultsDiv.appendChild(entryDiv);
+						return;
+					}
+
+					// Convert to 32-bit float
+					const hexValue = cleaned.padStart(8, '0');
+					const buffer = new ArrayBuffer(4);
+					const view = new DataView(buffer);
+					const intValue = parseInt(hexValue, 16);
+					view.setUint32(0, intValue, false);
+					const floatValue = view.getFloat32(0, false);
+
+					// Check if denormalized
+					const bits = intValue.toString(2).padStart(32, '0');
+					const exponent = parseInt(bits.substring(1, 9), 2);
+					const mantissa = parseInt(bits.substring(9), 2);
+					let status;
+
+					if (exponent === 0) {
+						if (mantissa === 0) {
+							status = 'Zero';
+						} else {
+							status = 'Denormalized';
+							entryDiv.className += ' denormal';
+						}
+					} else {
+						status = 'Normalized';
+						entryDiv.className += ' normal';
+					}
+
+					entryDiv.textContent = `Line ${index + 1}: 0x${hexValue.toUpperCase()} = ${floatValue} (${status})`;
+					resultsDiv.appendChild(entryDiv);
+				});
+			}
+		</script>
+	</body>
+</html>
