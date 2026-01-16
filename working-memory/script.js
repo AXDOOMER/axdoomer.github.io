@@ -12,6 +12,7 @@
   const avgEl = document.getElementById('avg');
   const finalScoreEl = document.getElementById('finalScore');
   const scoreBox = document.getElementById('score');
+  const postGameNote = document.getElementById('postGameNote');
 
   const yearEl = document.getElementById('year');
   yearEl.textContent = new Date().getFullYear();
@@ -154,6 +155,7 @@
     gameEl.classList.add('hidden');
     endEl.classList.remove('hidden');
     instructionsEl && instructionsEl.classList.remove('hidden');
+    postGameNote && postGameNote.classList.remove('hidden');
     if(answers.length === 0){
       finalScoreEl.textContent = 'No rounds played';
       if(avgEl) avgEl.textContent = '0%';
@@ -213,6 +215,7 @@
     if(scoreBox) scoreBox.classList.add('hidden');
     if(avgEl) avgEl.textContent = '0%';
     instructionsEl && instructionsEl.classList.add('hidden');
+    postGameNote && postGameNote.classList.add('hidden');
     nextRound();
   });
 
@@ -225,6 +228,7 @@
     if(scoreBox) scoreBox.classList.add('hidden');
     if(avgEl) avgEl.textContent = '0%';
     instructionsEl && instructionsEl.classList.remove('hidden');
+    postGameNote && postGameNote.classList.add('hidden');
   });
 
   // keyboard handler for submit
