@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Working Memory Test — Magical Number Game</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Working Memory Test</h1>
+
+      <div id="instructions">Instructions: Input the digits sorted</div>
+
+      <section class="controls" id="setup">
+        <div class="control-row">
+          <label for="rounds">Rounds:</label>
+          <select id="rounds">
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+          </select>
+        </div>
+        <div class="control-row">
+          <label for="mode">Mode:</label>
+          <select id="mode">
+            <option value="hard">Hard (5–9)</option>
+            <option value="normal" selected>Normal (5–9)</option>
+            <option value="easy">Easy (3–7)</option>
+          </select>
+        </div>
+        <div class="control-row small" id="rangeNote">Each round will use a random length between 5 and 9 digits.</div>
+          <div class="control-row small" id="timingNote">Digits flash for 2.5 to 5 seconds.</div>
+        <button id="startBtn">Start Game</button>
+      </section>
+
+      <section id="game" class="hidden">
+        <div id="roundInfo">Round <span id="roundNum">1</span></div>
+        <div id="display" class="display" aria-live="polite">00000</div>
+
+        <div id="inputArea" class="input-area">
+          <input id="answerInput" inputmode="numeric" autocomplete="off" maxlength="9" />
+          <div class="hint">Type digits sorted, then press Space or Enter to submit.</div>
+        </div>
+
+        <div id="feedback" class="feedback hidden" aria-live="polite"></div>
+        <div id="score" class="score hidden">Average: <span id="avg">0%</span></div>
+      </section>
+
+      <section id="end" class="hidden">
+        <h2>Final Score</h2>
+        <div id="finalScore">0</div>
+        <button id="resetBtn">Reset Game</button>
+      </section>
+
+      <footer class="footer">
+        <div class="links">
+          <a href="https://en.wikipedia.org/wiki/The_Magical_Number_Seven,_Plus_or_Minus_Two" target="_blank" rel="noopener">Magical Number Seven — Wikipedia</a>
+          <a href="https://labs.la.utexas.edu/gilden/files/2016/04/MagicNumberSeven-Miller1956.pdf" target="_blank" rel="noopener">Miller (1956) PDF</a>
+        </div>
+        <div class="copyright">© <span id="year">2026</span> AXDOOMER</div>
+      </footer>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
